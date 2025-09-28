@@ -212,11 +212,12 @@ export default function FarmerPage() {
   const getText = (en: string, hi: string) => (currentLanguage === 'hi' ? hi : en);
 
 
-  const parseAmount = (amountStr) => {
+  const parseAmount = (amountStr: string) => {
     if (!amountStr) return 0;
     const numeric = amountStr.replace(/[^\d]/g, '');
     return parseInt(numeric, 10) || 0;
   };
+  
 
   const countPendingPayments = (batches) => {
     return batches.filter((batch) => {
