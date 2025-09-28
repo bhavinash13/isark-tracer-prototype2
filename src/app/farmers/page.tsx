@@ -197,14 +197,16 @@ export default function FarmerPage() {
   
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
         setProfileDropdownOpen(false);
       }
     }
+  
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
 
   const toggleLanguage = () => setCurrentLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
   const getText = (en, hi) => (currentLanguage === 'hi' ? hi : en);
