@@ -209,7 +209,8 @@ export default function FarmerPage() {
   
 
   const toggleLanguage = () => setCurrentLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
-  const getText = (en, hi) => (currentLanguage === 'hi' ? hi : en);
+  const getText = (en: string, hi: string) => (currentLanguage === 'hi' ? hi : en);
+
 
   const parseAmount = (amountStr) => {
     if (!amountStr) return 0;
