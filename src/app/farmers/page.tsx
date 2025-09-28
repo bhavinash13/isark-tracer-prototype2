@@ -174,7 +174,8 @@ const mockFarmerData = {
 export default function FarmerPage() {
   const [isClient, setIsClient] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [farmer, setFarmer] = useState(null);
+  //const [farmer, setFarmer] = useState(null);
+  const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [showBatchDetails, setShowBatchDetails] = useState(false);
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
