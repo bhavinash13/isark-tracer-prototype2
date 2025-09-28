@@ -41,6 +41,9 @@ export default function AuthPage() {
       const user = users.find(u => (u.email === input || u.phone === input) && (u.pin === pin || u.password === pin));
       if (user) {
         sessionStorage.setItem('user', JSON.stringify(user));
+        if (user.role === 'farmer') {
+          sessionStorage.setItem('farmerId', user.id.trim());  // <- This line is needed!
+        }
         const dashboardMap: { [key: string]: string } = {
           farmer: '/farmers',
           lab: '/lab-tester',

@@ -125,14 +125,18 @@ export default function FarmerPage() {
 
   useEffect(() => {
     setIsClient(true);
+    sessionStorage.setItem('farmerId', 'F001');
     const farmerId = sessionStorage.getItem('farmerId');
+    console.log('FarmerId from session:', farmerId);
     if (farmerId) {
       const farmerData = mockFarmerData.farmers.find((f) => f.id === farmerId);
+      console.log('Found farmer:', farmerData);
       if (farmerData) {
         setFarmer(farmerData);
       }
     }
   }, []);
+  
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -330,9 +334,6 @@ export default function FarmerPage() {
   );
   
 
-  // if (!isClient) {
-  //   return <div className="min-h-screen flex items-center justify-center bg-gray-50">{getText('Loading...', 'लोड हो रहा है...')}</div>;
-  // }
   if (!isClient) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50">{getText('Loading...', 'लोड हो रहा है...')}</div>;
   }
@@ -342,58 +343,6 @@ export default function FarmerPage() {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-black">{getText('Unauthorized. Please login from main page.', 'अनधिकृत। कृपया मुख्य पृष्ठ से लॉगिन करें।')}</div>;
   }
 
-  // if (!isLoggedIn) {
-  //   return (
-  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-  //       <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8">
-  //         <div className="text-right mb-4">
-  //           <button onClick={toggleLanguage} className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700">
-  //             {currentLanguage === 'en' ? 'हिंदी' : 'English'}
-  //           </button>
-  //         </div>
-  //         <div className="text-center mb-8">
-  //           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-  //             <span className="text-4xl">🌾</span>
-  //           </div>
-  //           <h1 className="text-2xl font-bold text-black mb-2">{getText('Farmer Login', 'किसान लॉगिन')}</h1>
-  //           <p className="text-black">{getText('Access your herb batch dashboard', 'अपने जड़ी-बूटी बैच डैशबोर्ड तक पहुंचें')}</p>
-  //         </div>
-  //         <form onSubmit={handleLogin} className="space-y-6">
-  //           <div>
-  //             <label className="block text-sm font-medium text-black mb-2">{getText('Phone Number', 'फोन नंबर')}</label>
-  //             <input
-  //               type="tel"
-  //               value={loginForm.phone}
-  //               onChange={(e) => setLoginForm(prev => ({ ...prev, phone: e.target.value }))}
-  //               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-black"
-  //               placeholder={getText('+91-9876543210', '+91-9876543210')}
-  //               required
-  //             />
-  //           </div>
-  //           <div>
-  //             <label className="block text-sm font-medium text-black mb-2">{getText('Password', 'पासवर्ड')}</label>
-  //             <input
-  //               type="password"
-  //               value={loginForm.password}
-  //               onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-  //               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-black"
-  //               placeholder={getText('Enter your password', 'अपना पासवर्ड दर्ज करें')}
-  //               required
-  //             />
-  //           </div>
-  //           <button type="submit" className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
-  //             {getText('Login', 'लॉगिन')}
-  //           </button>
-  //         </form>
-  //         <div className="mt-6 text-center">
-  //           <p className="text-sm text-black">{getText('Demo credentials:', 'डेमो क्रेडेंशियल:')}</p>
-  //           <p className="text-sm text-black">{getText('Phone: +91-9876543210', 'फोन: +91-9876543210')}</p>
-  //           <p className="text-sm text-black">{getText('Password: farmer123', 'पासवर्ड: farmer123')}</p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   if (showBatchDetails && selectedBatch) {
     const expectedAmt = parseAmount(selectedBatch?.expectedAmount);
