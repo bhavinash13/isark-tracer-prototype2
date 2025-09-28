@@ -1,64 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-type Farmer = {
-  id: string;
-  name: string;
-  phone: string;
-  village: string;
-  farmSize: string;
-  experience: string;
-  organicCertified: boolean;
-  currentBatches: Array<{
-    id: string;
-    herbName: string;
-    herbNameHi: string;
-    plantingDate: string;
-    harvestDate: string;
-    quantity?: string;
-    stage: string;
-    stageHi: string;
-    paymentStatus: string;
-    paymentStatusHi: string;
-    expectedAmount?: string;
-    paidAmount?: string;
-    photos?: string[];
-    iotData?: {
-      soilMoisture?: string;
-      temperature?: string;
-      humidity?: string;
-      pH?: string;
-      lastUpdated?: string;
-    };
-    gpsLocation?: { lat: number; lng: number };
-    journey?: Array<{ stage: string; date: string; status: string }>;
-  }>;
-  pastBatches: Array<{
-    id: string;
-    herbName: string;
-    herbNameHi: string;
-    harvestDate?: string;
-    quantity?: string;
-    stage: string;
-    stageHi: string;
-    paymentStatus?: string;
-    paymentStatusHi?: string;
-    finalAmount?: string;
-    photos?: string[];
-    iotData?: {
-      soilMoisture?: string;
-      temperature?: string;
-      humidity?: string;
-      pH?: string;
-      lastUpdated?: string;
-    };
-    gpsLocation?: { lat: number; lng: number };
-    journey?: Array<{ stage: string; date: string; status: string }>;
-  }>;
-};
+import { useRouter } from 'next/navigation';
 
-// 2️⃣ Use it in useState
-//const [farmer, setFarmer] = useState<Farmer | null>(null);
 
 const defaultPhotosAshwagandha = [
   'data:image/jpeg;base64,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',
@@ -175,13 +119,32 @@ export default function FarmerPage() {
   const [isClient, setIsClient] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('en');
   //const [farmer, setFarmer] = useState(null);
-  const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [showBatchDetails, setShowBatchDetails] = useState(false);
-  const [selectedBatch, setSelectedBatch] = useState(null);
+  //const [selectedBatch, setSelectedBatch] = useState(null);
+  const [farmer, setFarmer] = useState<any | null>(null);
+  const [selectedBatch, setSelectedBatch] = useState<any | null>(null);
+
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  const profileRef = useRef<any>(null);
+  const router = useRouter();
 
+
+  const profileRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+    sessionStorage.setItem('farmerId', 'F001');
+    const farmerId = sessionStorage.getItem('farmerId');
+    console.log('FarmerId from session:', farmerId);
+    if (farmerId) {
+      const farmerData = mockFarmerData.farmers.find((f) => f.id === farmerId);
+      console.log('Found farmer:', farmerData);
+      if (farmerData) {
+        setFarmer(farmerData);
+      }
+    }
+  }, []);
+  
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -192,41 +155,21 @@ export default function FarmerPage() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  
 
-  
+  const toggleLanguage = (): void =>
+    setCurrentLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setProfileDropdownOpen(false);
-      }
-    }
-  
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-  
+  const getText = (en: string, hi: string): string =>
+    currentLanguage === 'hi' ? hi : en;
 
-  const toggleLanguage = () => setCurrentLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
-  const getText = (en: string, hi: string) => (currentLanguage === 'hi' ? hi : en);
-
-
-  const parseAmount = (amountStr: string) => {
+  const parseAmount = (amountStr: string): number => {
     if (!amountStr) return 0;
     const numeric = amountStr.replace(/[^\d]/g, '');
     return parseInt(numeric, 10) || 0;
   };
-  
 
-  type Batch = {
-    paymentStatus: 'Pending' | 'Partial' | 'Paid';
-    paidAmount?: string;
-    expectedAmount?: string;
-  };
-  
-  const countPendingPayments = (batches: Batch[]): number => {
-    return batches.filter((batch) => {
+  const countPendingPayments = (batches: any[]): number => {
+    return batches.filter((batch: any) => {
       if (batch.paymentStatus === 'Pending') return true;
       if (batch.paymentStatus === 'Partial') {
         const paid = parseAmount(batch.paidAmount || '0');
@@ -236,58 +179,40 @@ export default function FarmerPage() {
       return false;
     }).length;
   };
-  
 
   const handlePhotoUploadInBatch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-  
-    const files = Array.from(e.target.files).slice(0, 5);
-  
-    files.forEach(file => {
-      if (!file.type.startsWith('image/')) {
+    const files = Array.from(e.target.files ?? []).slice(0, 5);
+    files.forEach((file) => {
+      if (!(file instanceof File) || !file.type.startsWith('image/')) {
         alert(getText('Only images allowed', 'केवल छवियां अनुमति हैं'));
         return;
       }
-  
       const reader = new FileReader();
-  
-      reader.onload = (event: ProgressEvent<FileReader>) => {
-        const photoDataUrl = event.target?.result as string | null;
-        if (!photoDataUrl) return;
-  
-        setSelectedBatch(prev => {
+      reader.onload = (event) => {
+        const photoDataUrl = event.target?.result;
+        setSelectedBatch((prev: any) => {
           if (!prev) return prev;
-
-          // Ensure prev is typed as a Batch with photos property
-          const prevWithPhotos = prev as typeof prev & { photos?: string[]; id: string | number };
-          const newPhotos = [...(prevWithPhotos.photos || []), photoDataUrl];
-          const updated = { ...prevWithPhotos, photos: newPhotos };
-
-          setFarmer(f => {
+          // Ensure prev is an object and has photos property
+          const prevPhotos = Array.isArray(prev.photos) ? prev.photos : [];
+          const newPhotos = [...prevPhotos, photoDataUrl];
+          const updated = { ...(prev as object), photos: newPhotos };
+          setFarmer((f: any) => {
             if (!f) return f;
-  
-            const updateList = (list: typeof f.currentBatches) =>
-              list.map(b => (b.id === updated.id ? updated : b));
-  
-            if (f.currentBatches.some(b => b.id === updated.id)) {
+            const updateList = (list: any[]) => list.map((b: any) => (b.id === (updated as any).id ? updated : b));
+            if (Array.isArray(f.currentBatches) && f.currentBatches.some((b: any) => b.id === (updated as any).id)) {
               return { ...f, currentBatches: updateList(f.currentBatches) };
             }
-  
-            if (f.pastBatches.some(b => b.id === updated.id)) {
+            if (Array.isArray(f.pastBatches) && f.pastBatches.some((b: any) => b.id === (updated as any).id)) {
               return { ...f, pastBatches: updateList(f.pastBatches) };
             }
-  
             return f;
           });
-  
           return updated;
         });
       };
-  
       reader.readAsDataURL(file);
     });
   };
-  
 
   // const handleLogin = (e) => {
   //   e.preventDefault();
@@ -302,8 +227,17 @@ export default function FarmerPage() {
   // };
 
 
+  interface JourneyStage {
+    stage: string;
+    status: string;
+  }
 
-  const JourneyStepper = ({ batch }) => {
+  interface Batch {
+    journey?: JourneyStage[];
+    [key: string]: any;
+  }
+
+  const JourneyStepper: React.FC<{ batch: Batch }> = ({ batch }) => {
     const steps = [
       { key: 'Harvested', label: getText('Harvested', 'कटाई') },
       { key: 'Transported', label: getText('Transported', 'परिवहन') },
@@ -311,10 +245,11 @@ export default function FarmerPage() {
       { key: 'Lab Tested', label: getText('Lab Tested', 'लैब टेस्टिंग') },
       { key: 'Manufactured', label: getText('Manufactured', 'निर्माण') },
     ];
-    const stageIndices = {};
+    // Add an index signature to stageIndices for type safety
+    const stageIndices: { [key: string]: number } = {};
     steps.forEach((s, idx) => { stageIndices[s.key] = idx; });
     let lastCompletedIdx = -1;
-    batch?.journey?.forEach(j => {
+    batch?.journey?.forEach((j: any) => {
       if (j.status === 'completed' && stageIndices[j.stage] !== undefined) {
         if (stageIndices[j.stage] > lastCompletedIdx) lastCompletedIdx = stageIndices[j.stage];
       }
@@ -372,9 +307,11 @@ export default function FarmerPage() {
               aria-haspopup="true"
               aria-expanded={profileDropdownOpen}
               aria-label={getText('Farmer Profile Menu', 'किसान प्रोफ़ाइल मेनू')}
-              title={farmer?.name || 'Farmer'}
+              title={typeof farmer === 'object' && farmer !== null && 'name' in farmer ? (farmer as any).name || 'Farmer' : 'Farmer'}
             >
-              <span className="mr-2">{farmer?.name || 'Farmer'}</span>
+              <span className="mr-2">
+                {typeof farmer === 'object' && farmer !== null && 'name' in farmer ? (farmer as any).name || 'Farmer' : 'Farmer'}
+              </span>
               <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 011.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0l-4.25-4.65a.75.75 0 01.02-1.06z" clipRule="evenodd" />
               </svg>
@@ -389,24 +326,29 @@ export default function FarmerPage() {
               >
                 <div className="py-1" role="none">
                   <p className="block px-4 py-2 text-sm text-gray-700" role="menuitem">
-                    <strong>{getText('Name:', 'नाम:')}</strong> {farmer?.name}
+                    <strong>{getText('Name:', 'नाम:')}</strong> {typeof farmer === 'object' && farmer !== null && 'name' in farmer ? (farmer as any).name : ''}
                   </p>
                   <p className="block px-4 py-2 text-sm text-gray-700" role="menuitem">
-                    <strong>{getText('Farmer ID:', 'किसान ID:')}</strong> {farmer?.id}
+                    <strong>{getText('Farmer ID:', 'किसान ID:')}</strong> {typeof farmer === 'object' && farmer !== null && 'id' in farmer ? (farmer as any).id : ''}
                   </p>
                   <p className="block px-4 py-2 text-sm text-gray-700" role="menuitem">
-                    <strong>{getText('Phone:', 'फोन:')}</strong> {farmer?.phone}
+                    <strong>{getText('Phone:', 'फोन:')}</strong> {typeof farmer === 'object' && farmer !== null && 'phone' in farmer ? (farmer as any).phone : ''}
                   </p>
                   <p className="block px-4 py-2 text-sm text-gray-700" role="menuitem">
-                    <strong>{getText('Location:', 'स्थान:')}</strong> {farmer?.village}
+                    <strong>{getText('Location:', 'स्थान:')}</strong> {typeof farmer === 'object' && farmer !== null && 'village' in farmer ? (farmer as any).village : ''}
                   </p>
                   <button
                     onClick={() => {
-                      //setIsLoggedIn(false);
+                      if (typeof window !== 'undefined') {
+                        sessionStorage.removeItem('farmerId');
+                      }
+                      // Clear local farmer state and close dropdown
                       setFarmer(null);
-                      sessionStorage.removeItem('farmerId');
                       setProfileDropdownOpen(false);
+                      // Optional: redirect to main page
+                      try { router.push('/'); } catch (e) { /* router may be undefined in tests; ignore */ }
                     }}
+                    
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
                     role="menuitem"
                   >
@@ -432,10 +374,11 @@ export default function FarmerPage() {
   }
 
 
-  if (showBatchDetails && selectedBatch) {
-    const expectedAmt = parseAmount(selectedBatch?.expectedAmount);
-    const paidAmt = parseAmount(selectedBatch?.paidAmount || '0');
-    const pendingAmt = expectedAmt - paidAmt;
+  if (showBatchDetails && selectedBatch && typeof selectedBatch === 'object') {
+    // tolerate missing fields; fall back to expectedQuantity or 0
+    const expectedAmt = parseAmount((selectedBatch as any).expectedAmount || (selectedBatch as any).expectedQuantity || '0');
+    const paidAmt = parseAmount((selectedBatch as any).paidAmount || '0');
+    const pendingAmt = Math.max(0, expectedAmt - paidAmt);
 
     return (
       <>
@@ -447,9 +390,9 @@ export default function FarmerPage() {
                 ← {getText('Back to Dashboard', 'डैशबोर्ड पर वापस')}
               </button>
               <h1 className="text-2xl font-bold text-black mb-2">{getText('Batch Details', 'बैच विवरण')}</h1>
-              <p className="text-black">{getText('Batch ID:', 'बैच ID:')} {selectedBatch?.id}</p>
+              <p className="text-black">{getText('Batch ID:', 'बैच ID:')} {(selectedBatch as any)?.id}</p>
 
-              <JourneyStepper batch={selectedBatch} />
+              <JourneyStepper batch={selectedBatch as any} />
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="space-y-6">
@@ -458,15 +401,25 @@ export default function FarmerPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-black">{getText('Herb:', 'जड़ी-बूटी:')}</span>
-                        <span className="text-black font-medium">{currentLanguage === 'hi' ? selectedBatch?.herbNameHi : selectedBatch?.herbName}</span>
+                        <span className="text-black font-medium">
+                          {currentLanguage === 'hi'
+                            ? (selectedBatch as any)?.herbNameHi
+                            : (selectedBatch as any)?.herbName}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-black">{getText('Quantity:', 'मात्रा:')}</span>
-                        <span className="text-black font-medium">{selectedBatch?.quantity || selectedBatch?.expectedQuantity}</span>
+                        <span className="text-black font-medium">
+                          {(selectedBatch as any)?.quantity ?? (selectedBatch as any)?.expectedQuantity ?? 'N/A'}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-black">{getText('Status:', 'स्थिति:')}</span>
-                        <span className="text-black font-medium">{currentLanguage === 'hi' ? selectedBatch?.stageHi : selectedBatch?.stage}</span>
+                        <span className="text-black font-medium">
+                          {currentLanguage === 'hi'
+                            ? (selectedBatch as any)?.stageHi
+                            : (selectedBatch as any)?.stage}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-black">{getText('Payment Received:', 'प्राप्त राशि:')}</span>
@@ -483,22 +436,22 @@ export default function FarmerPage() {
 
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-black mb-4">{getText('Farm Sensor Data', 'खेत सेंसर डेटा')}</h3>
-                    {selectedBatch?.iotData ? (
+                    {(selectedBatch as any)?.iotData ? (
                       <div className="grid grid-cols-2 gap-4">
                         <div className="text-center p-3 bg-white rounded">
-                          <div className="text-2xl font-bold text-green-600">{selectedBatch.iotData.soilMoisture || 'N/A'}</div>
+                          <div className="text-2xl font-bold text-green-600">{(selectedBatch as any).iotData.soilMoisture || 'N/A'}</div>
                           <div className="text-sm text-black">{getText('Soil Moisture', 'मिट्टी की नमी')}</div>
                         </div>
                         <div className="text-center p-3 bg-white rounded">
-                          <div className="text-2xl font-bold text-orange-600">{selectedBatch.iotData.temperature || 'N/A'}</div>
+                          <div className="text-2xl font-bold text-orange-600">{(selectedBatch as any).iotData.temperature || 'N/A'}</div>
                           <div className="text-sm text-black">{getText('Temperature', 'तापमान')}</div>
                         </div>
                         <div className="text-center p-3 bg-white rounded">
-                          <div className="text-2xl font-bold text-blue-600">{selectedBatch.iotData.humidity || 'N/A'}</div>
+                          <div className="text-2xl font-bold text-blue-600">{(selectedBatch as any).iotData.humidity || 'N/A'}</div>
                           <div className="text-sm text-black">{getText('Humidity', 'आर्द्रता')}</div>
                         </div>
                         <div className="text-center p-3 bg-white rounded">
-                          <div className="text-2xl font-bold text-purple-600">{selectedBatch.iotData.pH || 'N/A'}</div>
+                          <div className="text-2xl font-bold text-purple-600">{(selectedBatch as any)?.iotData?.pH || 'N/A'}</div>
                           <div className="text-sm text-black">{getText('pH Level', 'pH स्तर')}</div>
                         </div>
                       </div>
@@ -511,12 +464,20 @@ export default function FarmerPage() {
 
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-black mb-4">{getText('GPS Location', 'GPS स्थान')}</h3>
-                    {selectedBatch?.gpsLocation ? (
+                    {(selectedBatch as any)?.gpsLocation ? (
                       <div className="text-black">
-                        <p>{getText('Latitude:', 'अक्षांश:')} {selectedBatch.gpsLocation.lat || 'N/A'}</p>
-                        <p>{getText('Longitude:', 'देशांतर:')} {selectedBatch.gpsLocation.lng || 'N/A'}</p>
+                        <p>
+                          {getText('Latitude:', 'अक्षांश:')}{' '}
+                          {(selectedBatch as any).gpsLocation.lat ?? 'N/A'}
+                        </p>
+                        <p>
+                          {getText('Longitude:', 'देशांतर:')}{' '}
+                          {(selectedBatch as any)?.gpsLocation?.lng ?? 'N/A'}
+                        </p>
                         <div className="mt-3 p-3 bg-blue-100 rounded">
-                          <p className="text-sm text-black">📍 {getText('Location verified by GPS', 'GPS द्वारा सत्यापित स्थान')}</p>
+                          <p className="text-sm text-black">
+                            📍 {getText('Location verified by GPS', 'GPS द्वारा सत्यापित स्थान')}
+                          </p>
                         </div>
                       </div>
                     ) : (
@@ -536,9 +497,9 @@ export default function FarmerPage() {
                       onChange={handlePhotoUploadInBatch}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4"
                     />
-                    {selectedBatch?.photos && selectedBatch.photos.length > 0 ? (
+                    {Array.isArray((selectedBatch as any)?.photos) && (selectedBatch as any).photos.length > 0 ? (
                       <div className="grid grid-cols-2 gap-3">
-                        {selectedBatch.photos.map((photo, idx) => (
+                        {(selectedBatch as any).photos.map((photo: string, idx: number) => (
                           <img key={idx} src={photo} alt={`Batch photo ${idx + 1}`} className="w-full h-32 object-cover rounded border" />
                         ))}
                       </div>
@@ -549,13 +510,22 @@ export default function FarmerPage() {
 
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-black mb-4">{getText('Journey Status', 'यात्रा की स्थिति')}</h3>
-                    {selectedBatch?.journey && selectedBatch.journey.length > 0 ? (
+                    {Array.isArray((selectedBatch as any)?.journey) && (selectedBatch as any).journey.length > 0 ? (
                       <div className="space-y-3 max-h-48 overflow-y-auto">
-                        {selectedBatch.journey.map((step, idx) => (
-                          <div key={idx} className="flex items-center space-x-3">
-                            <div className={`w-4 h-4 rounded-full ${step.status === 'completed' ? 'bg-green-500' : step.status === 'current' ? 'bg-blue-500' : 'bg-gray-300'}`} />
-                            <div className="flex-1">
-                              <p className="text-black font-medium">{step.stage}</p>
+                        {(selectedBatch as any).journey.map(
+                          (step: { status: string; stage: string; date: string }, idx: number) => (
+                            <div key={idx} className="flex items-center space-x-3">
+                              <div
+                                className={`w-4 h-4 rounded-full ${
+                                  step.status === 'completed'
+                                    ? 'bg-green-500'
+                                    : step.status === 'current'
+                                    ? 'bg-blue-500'
+                                    : 'bg-gray-300'
+                                }`}
+                              />
+                              <div className="flex-1">
+                                <p className="text-black font-medium">{step.stage}</p>
                               <p className="text-sm text-black">{step.date}</p>
                             </div>
                           </div>
@@ -587,7 +557,10 @@ export default function FarmerPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-black">{getText('Total Batches', 'कुल बैच')}</p>
-                  <p className="text-2xl font-semibold text-black">{(farmer?.currentBatches?.length || 0) + (farmer?.pastBatches?.length || 0)}</p>
+                  <p className="text-2xl font-semibold text-black">
+                    {(Array.isArray((farmer as any)?.currentBatches) ? (farmer as any).currentBatches.length : 0) +
+                      (Array.isArray((farmer as any)?.pastBatches) ? (farmer as any).pastBatches.length : 0)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -598,7 +571,9 @@ export default function FarmerPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-black">{getText('Active', 'सक्रिय')}</p>
-                  <p className="text-2xl font-semibold text-black">{farmer?.currentBatches?.length || 0}</p>
+                  <p className="text-2xl font-semibold text-black">
+                    {Array.isArray((farmer as any)?.currentBatches) ? (farmer as any).currentBatches.length : 0}
+                  </p>
                 </div>
               </div>
             </div>
@@ -609,7 +584,9 @@ export default function FarmerPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-black">{getText('Pending Payment', 'लंबित भुगतान')}</p>
-                  <p className="text-2xl font-semibold text-black">{countPendingPayments(farmer?.currentBatches || [])}</p>
+                  <p className="text-2xl font-semibold text-black">
+                    {countPendingPayments(Array.isArray((farmer as any)?.currentBatches) ? (farmer as any).currentBatches : [])}
+                  </p>
                 </div>
               </div>
             </div>
@@ -620,7 +597,7 @@ export default function FarmerPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-black">{getText('Completed', 'पूर्ण')}</p>
-                  <p className="text-2xl font-semibold text-black">{farmer?.pastBatches?.length || 0}</p>
+                  <p className="text-2xl font-semibold text-black">{Array.isArray((farmer as any)?.pastBatches) ? (farmer as any).pastBatches.length : 0}</p>
                 </div>
               </div>
             </div>
@@ -631,7 +608,7 @@ export default function FarmerPage() {
               <h3 className="text-lg font-medium text-black">{getText('Current Batches', 'वर्तमान बैच')}</h3>
             </div>
             <div className="divide-y divide-gray-200">
-              {farmer?.currentBatches?.map((batch) => {
+              {(Array.isArray((farmer as any)?.currentBatches) ? (farmer as any).currentBatches : [])?.map((batch: any) => {
                 const paidAmount = parseAmount(batch?.paidAmount);
                 const expectedAmount = parseAmount(batch?.expectedAmount);
                 const pendingAmount = expectedAmount - paidAmount;
@@ -684,8 +661,8 @@ export default function FarmerPage() {
               <h3 className="text-lg font-medium text-black">{getText('Past Batches', 'पिछले बैच')}</h3>
             </div>
             <div className="divide-y divide-gray-200">
-              {farmer?.pastBatches?.map((batch) => (
-                <div key={batch.id} className="p-6 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
+              {(Array.isArray((farmer as any)?.pastBatches) ? (farmer as any).pastBatches : [])?.map((batch: any) => (
+                <div key={batch?.id} className="p-6 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                       <span className="text-2xl">📦</span>
