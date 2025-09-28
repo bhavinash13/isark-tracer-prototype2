@@ -36,32 +36,35 @@ export default function ProcessorPage() {
         // --- START: Simulate successful login data for the dashboard to always show ---
         const mockUserId = 'proc-1'; 
         const processorMock = mockData.processors.find(p => p.id === mockUserId);
-
+      
         const mockUser = {
-            id: mockUserId,
-            email: processorMock?.email || 'processor@example.com',
-            role: 'processor',
-            name: processorMock?.name || 'Global Herb Processing Co.',
-            license: processorMock?.license || 'PROC-GHP-9876',
-            phone: processorMock?.phone || '+1-555-PROC'
+          id: mockUserId,
+          email: processorMock?.email || 'processor@example.com',
+          role: 'processor',
+          name: processorMock?.name || 'Global Herb Processing Co.',
+          license: processorMock?.license || 'PROC-GHP-9876',
+          phone: processorMock?.phone || '+1-555-PROC'
         };
         setUser(mockUser);
-
+      
         if (processorMock) {
-            const batches = mockData.farmers.flatMap(farmer =>
-                farmer.products.filter(product =>
-                    processorMock.assignedBatches.includes(product.id)
-                )
-            );
-            setAssignedBatches(batches.map(b => ({
-                ...b,
-                stage: b.stage || 'Received', 
-                processingSteps: b.processingSteps || [] 
-            })));
+          const batches = mockData.farmers.flatMap(farmer =>
+            farmer.products.filter(product =>
+              processorMock.assignedBatches.includes(product.id)
+            )
+          );
+          setAssignedBatches(
+            batches.map(b => ({
+              ...b,
+              stage: b.stage || 'Received',
+              processingSteps: Array.isArray((b as any).processingSteps)
+                ? (b as any).processingSteps
+                : []
+            }))
+          );
         }
-        // --- END: Simulate successful login data ---
-    }, []);
-
+      }, []); // ✅ runs only once when component mounts
+      
     const openProcessingModal = (batch: any) => {
         setSelectedBatch(batch);
         setProcessingStep({

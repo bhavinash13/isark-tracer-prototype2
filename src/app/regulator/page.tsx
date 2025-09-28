@@ -715,7 +715,12 @@ export default function RegulatorPage() {
   );
 
   // Navigation Tabs
-  const NavigationTabs = ({ currentView, setCurrentView }) => (
+  interface NavigationTabsProps {
+    currentView: string;
+    setCurrentView: (view: string) => void;
+  }
+
+  const NavigationTabs: React.FC<NavigationTabsProps> = ({ currentView, setCurrentView }) => (
     <div className="mb-6">
       <nav className="flex space-x-8">
         {[

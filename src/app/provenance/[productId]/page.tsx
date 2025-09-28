@@ -69,9 +69,9 @@ export default function ProvenancePage() {
             badge: 'processing-complete',
             color: 'purple',
             icon: '🏭',
-            details: foundBatch.processingSteps && foundBatch.processingSteps.length > 0 ? {
+            details: Array.isArray(foundBatch.processingSteps) && foundBatch.processingSteps.length > 0 ? {
               steps: foundBatch.processingSteps.length,
-              latestStep: foundBatch.processingSteps[foundBatch.processingSteps.length - 1]?.name
+              latestStep: (foundBatch.processingSteps[foundBatch.processingSteps.length - 1] as { name?: string })?.name
             } : null
           },
           {

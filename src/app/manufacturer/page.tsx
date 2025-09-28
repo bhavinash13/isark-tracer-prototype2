@@ -452,7 +452,7 @@ export default function ManufacturerDashboard() {
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {manufacturer.products.map((product) => (
+            {manufacturer.products.map((product: any) => (
               <div key={product.id} className="bg-white p-4 rounded-lg shadow border border-gray-300">
                 <div className="flex justify-between items-start">
                   <div>

@@ -158,7 +158,7 @@ const LabTesterDashboard = () => {
 
   // --- HANDLER FUNCTIONS ---
 
-  const handleLogin = (e) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Dummy Login Logic: just check if fields are non-empty
     if (loginForm.username && loginForm.password) {
@@ -195,40 +195,63 @@ const LabTesterDashboard = () => {
               testDate: testDate,
             },
             // Merge newly uploaded docs into permanent lists (in a real app, this would be backend logic)
-            uploadedImages: [...b.uploadedImages, ...(uploadedImages[b.id] || [])],
-            certificates: [...b.certificates, ...(uploadedCertificates[b.id] || [])],
+            uploadedImages: [
+              ...b.uploadedImages,
+              ...((uploadedImages as Record<string, string[]>)[b.id] || [])
+            ],
+            certificates: [
+              ...b.certificates,
+              ...((uploadedCertificates as Record<string, any[]>)[b.id] || [])
+            ],
           }
         : b
     );
 
     // 3. Update the global state and reset UI state
     setLab(prevLab => ({ ...prevLab, assignedBatches: updatedLabBatches }));
-    setSelectedBatch(updatedLabBatches.find(b => b.id === selectedBatch.id));
+    // Ensure setSelectedBatch never receives undefined (fallback to previous value)
+    const foundBatch = updatedLabBatches.find(b => b.id === selectedBatch.id);
+    if (foundBatch) {
+      setSelectedBatch(foundBatch);
+    }
     setShowTestModal(false);
-    setUploadedImages(prev => { delete prev[selectedBatch.id]; return { ...prev } });
-    setUploadedCertificates(prev => { delete prev[selectedBatch.id]; return { ...prev } });
+    // Fix: Add index signature to uploadedImages and uploadedCertificates state, or use type assertion
+    setUploadedImages(prev => {
+      const newImages = { ...prev } as Record<string, string[]>;
+      delete newImages[selectedBatch.id];
+      return newImages;
+    });
+    setUploadedCertificates(prev => {
+      const newCerts = { ...prev } as Record<string, any[]>;
+      delete newCerts[selectedBatch.id];
+      return newCerts;
+    });
     alert(`Test Results Submitted and Batch ${selectedBatch.id} marked as Completed!`);
   };
 
-  const handleImageUpload = (batchId, file) => {
+  const handleImageUpload = (batchId: string, file: File) => {
     const url = URL.createObjectURL(file);
-    setUploadedImages(prev => ({
-      ...prev,
-      [batchId]: [...(prev[batchId] || []), url]
-    }));
+    setUploadedImages(prev => {
+      const newImages = { ...prev } as Record<string, string[]>;
+      newImages[batchId] = [...(newImages[batchId] || []), url];
+      return newImages;
+    });
+    alert(`Image "${file.name}" ready for submission.`);
+    //}));
     alert(`Image "${file.name}" ready for submission.`);
   };
 
-  const handleCertificateUpload = (batchId, file) => {
+  const handleCertificateUpload = (batchId: string, file: File) => {
     const newCert = {
       name: file.name,
       uploadDate: new Date().toISOString().split('T')[0],
       url: URL.createObjectURL(file) // For viewing, but not used in this mock
     };
-    setUploadedCertificates(prev => ({
-      ...prev,
-      [batchId]: [...(prev[batchId] || []), newCert]
-    }));
+    setUploadedCertificates(prev => {
+      const newCerts = { ...prev } as Record<string, any[]>;
+      newCerts[batchId] = [...(newCerts[batchId] || []), newCert];
+      return newCerts;
+    });
     alert(`Certificate "${file.name}" ready for submission.`);
   };
 
@@ -608,7 +631,7 @@ const LabTesterDashboard = () => {
                           <div className="bg-gray-50 p-3 rounded-lg">
                             <p className="text-sm text-black">Active Compounds</p>
                             <p className="font-semibold text-black">
-                              {selectedBatch.testResults.activeCompounds || selectedBatch.testResults.withanolides || selectedBatch.testResults.bacosides}
+                              {selectedBatch.testResults.activeCompounds}
                             </p>
                           </div>
                           <div className="bg-gray-50 p-3 rounded-lg">
@@ -633,11 +656,12 @@ const LabTesterDashboard = () => {
                     </div>
                     <div className="p-6 space-y-6">
                       {/* Images */}
-                      {(selectedBatch.uploadedImages.length > 0 || (uploadedImages[selectedBatch.id] || []).length > 0) && (
+                      {(selectedBatch.uploadedImages.length > 0 ||
+                        ((uploadedImages as Record<string, string[]>)[selectedBatch.id]?.length ?? 0) > 0) && (
                         <div>
                           <h4 className="font-medium text-black mb-3">Test Images</h4>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {selectedBatch.uploadedImages.map((src, idx) => (
+                            {selectedBatch.uploadedImages.map((src: string, idx: number) => (
                               <img
                                 key={idx}
                                 src={src}
@@ -645,7 +669,10 @@ const LabTesterDashboard = () => {
                                 className="w-full h-24 object-cover rounded-lg border border-gray-200"
                               />
                             ))}
-                            {(uploadedImages[selectedBatch.id] || []).map((src, idx) => (
+                            {(uploadedImages && Array.isArray((uploadedImages as Record<string, string[]>)[selectedBatch.id]) 
+                              ? (uploadedImages as Record<string, string[]>)[selectedBatch.id] 
+                              : []
+                            ).map((src: string, idx: number) => (
                               <img
                                 key={`new-${idx}`}
                                 src={src}
@@ -658,7 +685,10 @@ const LabTesterDashboard = () => {
                       )}
 
                       {/* Certificates */}
-                      {(selectedBatch.certificates.length > 0 || (uploadedCertificates[selectedBatch.id] || []).length > 0) && (
+                      {(selectedBatch.certificates.length > 0 ||
+                        (Array.isArray((uploadedCertificates as Record<string, { name: string; uploadDate: string }[]>)[selectedBatch.id]) &&
+                          ((uploadedCertificates as Record<string, { name: string; uploadDate: string }[]>)[selectedBatch.id]?.length ?? 0) > 0)
+                      ) && (
                         <div>
                           <h4 className="font-medium text-black mb-3">Certificates</h4>
                           <div className="space-y-2">
@@ -673,7 +703,10 @@ const LabTesterDashboard = () => {
                                 </button>
                               </div>
                             ))}
-                            {(uploadedCertificates[selectedBatch.id] || []).map((cert, idx) => (
+                            {(Array.isArray((uploadedCertificates as Record<string, { name: string; uploadDate: string }[]>)[selectedBatch.id])
+                              ? (uploadedCertificates as Record<string, { name: string; uploadDate: string }[]>)[selectedBatch.id]
+                              : []
+                            ).map((cert, idx) => (
                               <div key={`new-cert-${idx}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-purple-500">
                                 <div>
                                   <p className="font-medium text-black">{cert.name}</p>
