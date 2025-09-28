@@ -219,7 +219,13 @@ export default function FarmerPage() {
   };
   
 
-  const countPendingPayments = (batches) => {
+  type Batch = {
+    paymentStatus: 'Pending' | 'Partial' | 'Paid';
+    paidAmount?: string;
+    expectedAmount?: string;
+  };
+  
+  const countPendingPayments = (batches: Batch[]): number => {
     return batches.filter((batch) => {
       if (batch.paymentStatus === 'Pending') return true;
       if (batch.paymentStatus === 'Partial') {
@@ -230,38 +236,58 @@ export default function FarmerPage() {
       return false;
     }).length;
   };
+  
 
-  const handlePhotoUploadInBatch = (e) => {
+  const handlePhotoUploadInBatch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+  
     const files = Array.from(e.target.files).slice(0, 5);
+  
     files.forEach(file => {
       if (!file.type.startsWith('image/')) {
         alert(getText('Only images allowed', 'केवल छवियां अनुमति हैं'));
         return;
       }
+  
       const reader = new FileReader();
-      reader.onload = (event) => {
-        const photoDataUrl = event.target.result;
+  
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        const photoDataUrl = event.target?.result as string | null;
+        if (!photoDataUrl) return;
+  
         setSelectedBatch(prev => {
           if (!prev) return prev;
-          const newPhotos = [...(prev.photos || []), photoDataUrl];
-          const updated = { ...prev, photos: newPhotos };
+
+          // Ensure prev is typed as a Batch with photos property
+          const prevWithPhotos = prev as typeof prev & { photos?: string[]; id: string | number };
+          const newPhotos = [...(prevWithPhotos.photos || []), photoDataUrl];
+          const updated = { ...prevWithPhotos, photos: newPhotos };
+
           setFarmer(f => {
             if (!f) return f;
-            const updateList = (list) => list.map(b => (b.id === updated.id ? updated : b));
+  
+            const updateList = (list: typeof f.currentBatches) =>
+              list.map(b => (b.id === updated.id ? updated : b));
+  
             if (f.currentBatches.some(b => b.id === updated.id)) {
               return { ...f, currentBatches: updateList(f.currentBatches) };
             }
+  
             if (f.pastBatches.some(b => b.id === updated.id)) {
               return { ...f, pastBatches: updateList(f.pastBatches) };
             }
+  
             return f;
           });
+  
           return updated;
         });
       };
+  
       reader.readAsDataURL(file);
     });
   };
+  
 
   // const handleLogin = (e) => {
   //   e.preventDefault();
