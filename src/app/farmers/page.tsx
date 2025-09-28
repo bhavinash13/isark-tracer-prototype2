@@ -121,7 +121,8 @@ export default function FarmerPage() {
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  const profileRef = useRef();
+  const profileRef = useRef<any>(null);
+
 
   useEffect(() => {
     setIsClient(true);
