@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ISARK Tracer
 
-## Getting Started
+Frontend-only prototype SPA for supply chain traceability. Runs fully in the browser using localStorage. No backend, no blockchain.
 
-First, run the development server:
+Tech: React, Next.js (client-only), TailwindCSS, react-router, html5-qrcode, qr-code-styling.
 
-```bash
+## Run locally
+
+```
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Top navbar with EN/HI toggle, auth, and quick routes
+- Mock auth with email/phone/userId + 6-digit PIN
+- Role dashboards: Farmer, Transporter, Processor, Lab, Manufacturer, Regulator
+- Batch detail: photo upload (camera/file) with auto geotag, timeline, actions
+- Transporter trip: start/stop with periodic geo pings
+- Processor events: method + yield ledger
+- Lab: upload PDF, pass/fail toggles, block failing batches
+- Manufacturer: aggregate selection, product creation, QR generation, export JSON
+- Consumer QRScan: verify by recomputing proof hash from stored data
+- Regulator: filters and simple India map heat tiles
+- Offline-first: all data in localStorage
 
-## Learn More
+## Logins (seed)
 
-To learn more about Next.js, take a look at the following resources:
+- u_f1 / farmer1@isark / 900000001 PIN 111111 (farmer)
+- u_t1 PIN 222222 (transporter)
+- u_p1 PIN 333333 (processor)
+- u_m1 PIN 444444 (manufacturer)
+- u_l1 PIN 555555 (lab)
+- u_r1 PIN 666666 (regulator)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Data keys: `isark_users`, `isark_batches`, `isark_aggregates`, `isark_products`

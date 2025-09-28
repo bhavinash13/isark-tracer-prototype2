@@ -470,7 +470,6 @@ export default function RegulatorPage() {
   const [selectedFarmer, setSelectedFarmer] = useState<any>(null);
   const [selectedStep, setSelectedStep] = useState<string>('farmer');
   const [loginForm, setLoginForm] = useState({ phone: '', password: '' });
-  const [batchSearchId, setBatchSearchId] = useState('');
 
   useEffect(() => {
     const userData = sessionStorage.getItem('user');
@@ -578,47 +577,7 @@ export default function RegulatorPage() {
     }]
   };
 
-    // Batch search function
-  const handleBatchSearch = () => {
-    if (!batchSearchId.trim()) {
-      alert('Please enter a batch ID');
-      return;
-    }
-
-    // Search for the batch in the farmers data
-    let foundFarmer = null;
-    let foundHerb = null;
-    let foundProduct = null;
-
-    // Search through all manufacturers, products, herbs, and farmers
-    for (const manufacturer of extendedManufacturers) {
-      for (const product of manufacturer.products || []) {
-        for (const herb of product.herbs || []) {
-          for (const farmer of herb.farmers || []) {
-            if (farmer.farmerId === batchSearchId || farmer.batchId === batchSearchId) {
-              foundFarmer = farmer;
-              foundHerb = herb;
-              foundProduct = product;
-              break;
-            }
-          }
-          if (foundFarmer) break;
-        }
-        if (foundFarmer) break;
-      }
-      if (foundFarmer) break;
-    }
-
-    if (foundFarmer) {
-      setSelectedProduct(foundProduct);
-      setSelectedHerb(foundHerb);
-      setSelectedFarmer(foundFarmer);
-    } else {
-      alert('Batch ID not found. Please check the ID and try again.');
-    }
-  };
-
-// Header Component
+  // Header Component
   const Header = () => (
     <div className="bg-white shadow-sm border-b border-gray-200 mb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -641,54 +600,14 @@ export default function RegulatorPage() {
             <div className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
               Inspector {user.name}
             </div>
-
-          </div>
-        </div>
-      </div>
-
-      {/* Batch Search Section - Added below header, above navigation */}
-      <div className="border-t border-gray-200 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex-1 max-w-md">
-              <label htmlFor="batch-search" className="sr-only">
-                Search Batch ID
-              </label>
-              <div className="relative flex ">
-                <input
-                  type="text"
-                  id="batch-search"
-                  className="block w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter Batch ID (e.g., F001 or ASH-F001-2025)"
-                  value={batchSearchId}
-                  onChange={(e) => setBatchSearchId(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleBatchSearch();
-                    }
-                   
-                  }}
-                  autoFocus
-                />
-              
-              </div>
-            </div>
-            <button
-              onClick={handleBatchSearch}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-            >
-              Search Batch
-            </button>
-            <div className="text-sm text-gray-600">
-              <span className="font-medium"> Quick Search:</span> Search by this ID: ASH-F001-2025
-            </div>
+            
           </div>
         </div>
       </div>
     </div>
   );
 
-
+ 
 
   // Charts Dashboard Section (only for charts - no colors elsewhere)
   const ChartsDashboard = () => (
@@ -1202,7 +1121,20 @@ export default function RegulatorPage() {
       </div>
     );
   };
-
+const inputfunc = () => {
+  const [cur,setcur]=useState("");
+  return (
+    <div>
+      <input type='text' placeholder='Search by Batch ID' onChange={(e)=>{
+          setcur(e.target.value);
+          
+      }} value={cur}>🔍</input>
+      <button onClick={()=>{
+        
+      }}>Search</button>
+    </div>
+  )
+}
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />

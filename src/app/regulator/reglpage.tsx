@@ -468,9 +468,7 @@ export default function RegulatorPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedHerb, setSelectedHerb] = useState<any>(null);
   const [selectedFarmer, setSelectedFarmer] = useState<any>(null);
-  const [selectedStep, setSelectedStep] = useState<string>('farmer');
-  const [loginForm, setLoginForm] = useState({ phone: '', password: '' });
-  const [batchSearchId, setBatchSearchId] = useState('');
+  const [selectedStep, setSelectedStep] = useState<string>('');
 
   useEffect(() => {
     const userData = sessionStorage.getItem('user');
@@ -480,56 +478,14 @@ export default function RegulatorPage() {
   }, []);
 
   if (!user) {
-    const handleLogin = (e: React.FormEvent) => {
-      e.preventDefault();
-      if (loginForm.phone === '+911123456789' && loginForm.password === '1234') {
-        const u = { id: 'reg1', role: 'regulator', name: 'Inspector Raj', email: 'regulator@example.com', phone: '+911123456789' };
-        sessionStorage.setItem('user', JSON.stringify(u));
-        window.location.reload();
-      } else {
-        alert('Invalid phone or password');
-      }
-    };
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8">
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-4xl">🛡️</span>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Regulator Login</h2>
-            <p className="text-gray-600">Enter your phone and password</p>
-          </div>
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-              <input
-                type="tel"
-                value={loginForm.phone}
-                onChange={(e) => setLoginForm(prev => ({ ...prev, phone: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
-                placeholder={'+911123456789'}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-              <input
-                type="password"
-                value={loginForm.password}
-                onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
-                placeholder={'Enter your password'}
-                required
-              />
-            </div>
-            <button type="submit" className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">Login</button>
-          </form>
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Demo credentials:</p>
-            <p>Phone: +911123456789</p>
-            <p>Password: 1234</p>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+          <p className="text-gray-600 mb-4">Please login to access the regulator dashboard.</p>
+          <Link href="/auth?role=regulator" className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700">
+            Login as Regulator
+          </Link>
         </div>
       </div>
     );
@@ -578,117 +534,34 @@ export default function RegulatorPage() {
     }]
   };
 
-    // Batch search function
-  const handleBatchSearch = () => {
-    if (!batchSearchId.trim()) {
-      alert('Please enter a batch ID');
-      return;
-    }
-
-    // Search for the batch in the farmers data
-    let foundFarmer = null;
-    let foundHerb = null;
-    let foundProduct = null;
-
-    // Search through all manufacturers, products, herbs, and farmers
-    for (const manufacturer of extendedManufacturers) {
-      for (const product of manufacturer.products || []) {
-        for (const herb of product.herbs || []) {
-          for (const farmer of herb.farmers || []) {
-            if (farmer.farmerId === batchSearchId || farmer.batchId === batchSearchId) {
-              foundFarmer = farmer;
-              foundHerb = herb;
-              foundProduct = product;
-              break;
-            }
-          }
-          if (foundFarmer) break;
-        }
-        if (foundFarmer) break;
-      }
-      if (foundFarmer) break;
-    }
-
-    if (foundFarmer) {
-      setSelectedProduct(foundProduct);
-      setSelectedHerb(foundHerb);
-      setSelectedFarmer(foundFarmer);
-    } else {
-      alert('Batch ID not found. Please check the ID and try again.');
-    }
-  };
-
-// Header Component
+  // Header Component
   const Header = () => (
     <div className="bg-white shadow-sm border-b border-gray-200 mb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
-          <span className="text-4xl">🛡️</span>
+            <img src="/api/placeholder/50/50?text=AYUSH" alt="AYUSH Logo" className="h-12 w-12 mr-4 rounded-full" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Regulatory Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">AYUSH Regulatory Dashboard</h1>
               <p className="text-sm text-gray-600">Ministry of Ayush - Blockchain Traceability System</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="h-3 w-3 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-gray-700">System Healthy</span>
+              <div className="h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-sm text-gray-600">System Healthy</span>
             </div>
-            <div className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium border border-amber-200">
+            <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
               🚨 2 Active Alerts
             </div>
             <div className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
               Inspector {user.name}
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      {/* Batch Search Section - Added below header, above navigation */}
-      <div className="border-t border-gray-200 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex-1 max-w-md">
-              <label htmlFor="batch-search" className="sr-only">
-                Search Batch ID
-              </label>
-              <div className="relative flex ">
-                <input
-                  type="text"
-                  id="batch-search"
-                  className="block w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter Batch ID (e.g., F001 or ASH-F001-2025)"
-                  value={batchSearchId}
-                  onChange={(e) => setBatchSearchId(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleBatchSearch();
-                    }
-                   
-                  }}
-                  autoFocus
-                />
-              
-              </div>
-            </div>
-            <button
-              onClick={handleBatchSearch}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-            >
-              Search Batch
-            </button>
-            <div className="text-sm text-gray-600">
-              <span className="font-medium"> Quick Search:</span> Search by this ID: ASH-F001-2025
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-
-
 
   // Charts Dashboard Section (only for charts - no colors elsewhere)
   const ChartsDashboard = () => (
@@ -715,37 +588,35 @@ export default function RegulatorPage() {
   );
 
   // Navigation Tabs
-  const NavigationTabs = ({ currentView, setCurrentView }) => (
+  const NavigationTabs = () => (
     <div className="mb-6">
       <nav className="flex space-x-8">
         {[
-          { id: 'dashboard', label: 'Dashboard Overview' },
-          { id: 'manufacturers', label: 'Manufacturers' },
-          { id: 'products', label: 'Product Details' },
-          { id: 'investigations', label: 'Investigations' }
+          { id: 'dashboard', label: 'Dashboard Overview', icon: '📊' },
+          { id: 'manufacturers', label: 'Manufacturers', icon: '🏭' },
+          { id: 'products', label: 'Product Details', icon: '📦' },
+          { id: 'investigations', label: 'Investigations', icon: '🔍' }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setCurrentView(tab.id)}
-            className={`px-4 py-2 text-sm font-medium rounded-md border-2 transition-colors
-              ${
-                currentView === tab.id
-                  ? 'bg-blue-900 text-white border-blue-900'
-                  : 'bg-blue-800 text-blue-100 border-blue-900 hover:bg-blue-900 hover:text-white'
-              }`}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${
+              currentView === tab.id
+                ? 'bg-gray-100 text-gray-900 border border-gray-300'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
           >
-            {tab.label}
+            {tab.icon} {tab.label}
           </button>
         ))}
       </nav>
     </div>
   );
-  
 
   // KPI Section (no extra colors)
   const KPISection = () => (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-400">
+      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-gray-400">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">Active Manufacturers</p>
@@ -760,7 +631,7 @@ export default function RegulatorPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-400">
+      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-gray-400">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">Total Products</p>
@@ -777,7 +648,7 @@ export default function RegulatorPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-400">
+      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-gray-400">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">Total Herbs</p>
@@ -796,7 +667,7 @@ export default function RegulatorPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-400">
+      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-gray-400">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">Total Farmers</p>
@@ -817,7 +688,7 @@ export default function RegulatorPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-400">
+      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-gray-400">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">Supply Chain Steps</p>
@@ -849,7 +720,7 @@ export default function RegulatorPage() {
               setSelectedManufacturer(manufacturer);
               setCurrentView('products');
             }}
-            className="bg-white rounded-lg shadow-md p-6 border cursor-pointer hover:shadow-lg transition-shadow duration-200 border-l-4 border-green-400"
+            className="bg-white rounded-lg shadow-md p-6 border cursor-pointer hover:shadow-lg transition-shadow duration-200 border-l-4 border-gray-400"
           >
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-lg font-semibold text-gray-900 truncate">{manufacturer.name}</h3>
@@ -886,7 +757,7 @@ export default function RegulatorPage() {
                 📍 {manufacturer.location}
               </div>
               <div className="text-xs text-gray-500">
-                 Est. {manufacturer.establishedYear}
+                🏢 Est. {manufacturer.establishedYear}
               </div>
             </div>
 
@@ -927,55 +798,47 @@ export default function RegulatorPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  {selectedManufacturer.products?.map((product: any) => (
-    <div key={product.id} className="bg-white rounded-lg shadow border">
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-            <p className="text-sm text-gray-600">Type: {product.type}</p>
-            <p className="text-sm text-gray-600">Batch: {product.batchId}</p>
-            <p className="text-sm text-gray-600">Status: {product.status}</p>
-          </div>
-          {/* Dummy QR Code Image */}
-          <div className="ml-4 flex-shrink-0">
-            <img
-              src="data:image/png;base64,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"
-              alt="QR code"
-              className="w-20 h-20 object-contain rounded border border-gray-300"
-            />
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <h4 className="font-medium text-gray-900 mb-2">Herb Composition:</h4>
-          <div className="space-y-2">
-            {product.herbs?.map((herb: any) => (
-              <div key={herb.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                <div>
-                  <span className="font-medium text-black">{herb.name}</span>
-                  <span className="text-xs text-gray-600 ml-2">({herb.percentage}%)</span>
-                  <div className="text-xs text-gray-500">
-                    {herb.farmers?.length || 0} farmer(s) contributing
+          {selectedManufacturer.products?.map((product: any) => (
+            <div key={product.id} className="bg-white rounded-lg shadow border">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+                    <p className="text-sm text-gray-600">Type: {product.type}</p>
+                    <p className="text-sm text-gray-600">Batch: {product.batchId}</p>
+                    <p className="text-sm text-gray-600">Status: {product.status}</p>
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedProduct(product);
-                    setSelectedHerb(herb);
-                  }}
-                  className="text-xs text-emerald-700 hover:text-emerald-800 border border-emerald-200 px-2 py-1 rounded bg-emerald-50 hover:bg-emerald-100 transition-colors"
-                >
-                  View Farmers
-                </button>
+
+                <div className="mb-4">
+                  <h4 className="font-medium text-gray-900 mb-2">Herb Composition:</h4>
+                  <div className="space-y-2">
+                    {product.herbs?.map((herb: any) => (
+                      <div key={herb.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <div>
+                          <span className="font-medium text-black-sm">{herb.name}</span>
+                          <span className="text-xs text-black-600 ml-2">({herb.percentage}%)</span>
+                          <div className="text-xs text-black-500">
+                            {herb.farmers?.length || 0} farmer(s) contributing
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setSelectedProduct(product);
+                            setSelectedHerb(herb);
+                          }}
+                          className="text-xs text-black-600 hover:text-green-800 border border-gray-300 px-2 py-1 rounded"
+                        >
+                          View Farmers
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          )) || <div className="text-gray-500">No products found</div>}
         </div>
-      </div>
-    </div>
-  )) || <div className="text-gray-500">No products found</div>}
-</div>
 
         {/* Herb Details Modal */}
         {selectedHerb && (
@@ -1040,7 +903,7 @@ export default function RegulatorPage() {
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-xl font-semibold text-black">
+            <h3 className="text-xl font-semibold text-blac">
               Supply Chain: {selectedFarmer.farmerName}
             </h3>
             <p className="text-sm text-black">Batch ID: {selectedFarmer.batchId}</p>
@@ -1100,7 +963,7 @@ export default function RegulatorPage() {
                   {/* Step Data */}
                   <div className="space-y-4">
                     <h5 className="font-semibold text-black">Step Details:</h5>
-                    <div className="space-y-2 text-sm text-black">
+                    <div className="space-y-2 text-sm">
                       {Object.entries(
                         farmerSupplyChainData[
                           selectedFarmer.farmerId as keyof typeof farmerSupplyChainData
@@ -1111,10 +974,10 @@ export default function RegulatorPage() {
                         if (key === 'images' || key === 'tests') return null;
                         return (
                           <div key={key}>
-                            <span className="font-medium capitalize text-black">
+                            <span className="font-medium capitalize">
                               {key.replace(/([A-Z])/g, ' $1').trim()}:
                             </span>
-                            <span className="ml-2 text-black">
+                            <span className="ml-2">
                               {typeof value === 'object' && value !== null
                                 ? JSON.stringify(value)
                                 : String(value)}
@@ -1127,11 +990,11 @@ export default function RegulatorPage() {
                       {selectedStep === 'tester' &&
                         farmerSupplyChainData[selectedFarmer.farmerId as keyof typeof farmerSupplyChainData].tester.tests && (
                           <div className="space-y-1 mt-3">
-                            <div className="font-medium text-black">Test Results:</div>
+                            <div className="font-medium">Test Results:</div>
                             {Object.entries(
                               farmerSupplyChainData[selectedFarmer.farmerId as keyof typeof farmerSupplyChainData].tester.tests
                             ).map(([test, result]) => (
-                              <div key={test} className="ml-4 text-xs text-black">
+                              <div key={test} className="ml-4 text-xs">
                                 <span className="capitalize">
                                   {test.replace(/([A-Z])/g, ' $1').trim()}:
                                 </span>
@@ -1146,8 +1009,8 @@ export default function RegulatorPage() {
                         selectedStep as keyof typeof farmerSupplyChainData['F001']
                       ].blockchainHash && (
                         <div className="bg-gray-100 p-2 rounded">
-                          <span className="font-medium text-black">Blockchain Hash:</span>
-                          <code className="text-xs ml-2 text-black">
+                          <span className="font-medium">Blockchain Hash:</span>
+                          <code className="text-xs ml-2">
                             {
                               farmerSupplyChainData[selectedFarmer.farmerId as keyof typeof farmerSupplyChainData][
                                 selectedStep as keyof typeof farmerSupplyChainData['F001']
@@ -1198,7 +1061,6 @@ export default function RegulatorPage() {
   </div>
 )}
 
-
       </div>
     );
   };
@@ -1209,7 +1071,7 @@ export default function RegulatorPage() {
       
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <NavigationTabs currentView={currentView} setCurrentView={setCurrentView}/>
+          <NavigationTabs />
           
           {currentView === 'dashboard' && (
             <>

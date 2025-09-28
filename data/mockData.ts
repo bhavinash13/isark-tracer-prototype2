@@ -1,11 +1,13 @@
 // data/mockData.ts
 
 export const users = [
-  { email: "farmer1@example.com", password: "1234", role: "farmer", id: "f1" },
-  { email: "farmer2@example.com", password: "1234", role: "farmer", id: "f2" },
-  { email: "lab1@example.com", password: "1234", role: "lab", id: "lab1" },
-  { email: "proc1@example.com", password: "1234", role: "processor", id: "proc1" },
-  { email: "regulator@example.com", password: "1234", role: "regulator", id: "reg1" },
+  { email: "farmer1@example.com", phone: "+919876543210", pin: "111111", password: "1234", role: "farmer", id: "f1" },
+  { email: "farmer2@example.com", phone: "+919812345678", pin: "222222", password: "1234", role: "farmer", id: "f2" },
+  { email: "lab1@example.com", phone: "+919900112233", pin: "333333", password: "1234", role: "lab", id: "lab1" },
+  { email: "proc1@example.com", phone: "+919911223344", pin: "444444", password: "1234", role: "processor", id: "proc1" },
+  { email: "trans1@example.com", phone: "+919922334455", pin: "555555", password: "1234", role: "transporter", id: "t1" },
+  { email: "mfg1@example.com", phone: "+919933445566", pin: "666666", password: "1234", role: "manufacturer", id: "m1" },
+  { email: "regulator@example.com", phone: "+911123456789", pin: "777777", password: "1234", role: "regulator", id: "reg1" },
 ];
 
 export const mockData = {
@@ -24,6 +26,7 @@ export const mockData = {
           iotMetrics: { temperature: 25, humidity: 60, timestamp: "2025-09-21T10:00:00Z" },
           labResults: { moisture: null, pesticide: null, dna: null },
           processingSteps: [],
+          transportEvents: [],
         },
       ],
     },
@@ -41,8 +44,17 @@ export const mockData = {
           iotMetrics: { temperature: 24, humidity: 55, timestamp: "2025-09-21T11:30:00Z" },
           labResults: { moisture: null, pesticide: null, dna: null },
           processingSteps: [],
+          transportEvents: [],
         },
       ],
+    },
+  ],
+
+  transporters: [
+    {
+      id: "t1",
+      name: "Transporter A",
+      assignedBatches: ["p1", "p2"],
     },
   ],
 
@@ -59,6 +71,16 @@ export const mockData = {
       id: "proc1",
       name: "Processor A",
       assignedBatches: ["p1", "p2"],
+    },
+  ],
+
+  manufacturers: [
+    {
+      id: "m1",
+      name: "Manufacturer A",
+      assignedBatches: ["p1", "p2"],
+      aggregates: [],
+      products: [],
     },
   ],
 
