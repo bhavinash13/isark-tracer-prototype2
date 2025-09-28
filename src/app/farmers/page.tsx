@@ -184,18 +184,16 @@ export default function FarmerPage() {
 
 
   useEffect(() => {
-    setIsClient(true);
-    sessionStorage.setItem('farmerId', 'F001');
-    const farmerId = sessionStorage.getItem('farmerId');
-    console.log('FarmerId from session:', farmerId);
-    if (farmerId) {
-      const farmerData = mockFarmerData.farmers.find((f) => f.id === farmerId);
-      console.log('Found farmer:', farmerData);
-      if (farmerData) {
-        setFarmer(farmerData);
+    function handleClickOutside(event: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
       }
     }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
+
   
 
   useEffect(() => {
