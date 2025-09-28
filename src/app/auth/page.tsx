@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { users } from '../../../data/mockData';
 
-export default function AuthPage() {
+function AuthContent() {
   const [isLogin, setIsLogin] = useState(true);
   const [isHindi, setIsHindi] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,26 +32,34 @@ export default function AuthPage() {
     if (isLogin) {
       const input = formData.emailOrPhone.trim();
       const pin = formData.pin.trim();
-      // Accept 6-digit PIN or legacy 4-digit demo passwords
       const isValidPin = /^\d{6}$/.test(pin) || /^\d{4}$/.test(pin);
+
       if (!isValidPin) {
         setError('Please enter a 6-digit PIN (or 4-digit demo code).');
         return;
       }
-      const user = users.find(u => (u.email === input || u.phone === input) && (u.pin === pin || u.password === pin));
+
+      const user = users.find(
+        u =>
+          (u.email === input || u.phone === input) &&
+          (u.pin === pin || u.password === pin)
+      );
+
       if (user) {
         sessionStorage.setItem('user', JSON.stringify(user));
         if (user.role === 'farmer') {
-          sessionStorage.setItem('farmerId', user.id.trim());  // <- This line is needed!
+          sessionStorage.setItem('farmerId', user.id.trim());
         }
+
         const dashboardMap: { [key: string]: string } = {
           farmer: '/farmers',
           lab: '/lab-tester',
           processor: '/processor',
           regulator: '/regulator',
           transporter: '/transporter',
-          manufacturer: '/manufacturer',
+          manufacturer: '/manufacturer'
         };
+
         router.push(dashboardMap[user.role] || '/');
       } else {
         setError('Invalid credentials. Use email/phone and 6-digit PIN.');
@@ -93,6 +101,7 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8">
+        {/* Language Toggle */}
         <div className="text-right mb-4">
           <button 
             onClick={() => setIsHindi(!isHindi)} 
@@ -101,7 +110,8 @@ export default function AuthPage() {
             {isHindi ? 'English' : 'हिंदी'}
           </button>
         </div>
-        
+
+        {/* Header */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-4xl">{currentRole?.icon || '🌱'}</span>
@@ -120,6 +130,7 @@ export default function AuthPage() {
           </p>
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
             <div>
@@ -211,6 +222,7 @@ export default function AuthPage() {
           </button>
         </form>
 
+        {/* Toggle Login/Signup */}
         <div className="mt-6 text-center">
           <button
             type="button"
@@ -224,6 +236,7 @@ export default function AuthPage() {
           </button>
         </div>
 
+        {/* Demo Credentials */}
         <div className="mt-6 text-center">
           <p className="text-sm text-black">{isHindi ? 'डेमो क्रेडेंशियल:' : 'Demo credentials:'}</p>
           <div className="space-y-1 text-xs text-black">
@@ -237,5 +250,14 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ✅ Main AuthPage with Suspense
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthContent />
+    </Suspense>
   );
 }
