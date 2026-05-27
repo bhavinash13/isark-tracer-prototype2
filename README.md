@@ -2,16 +2,8 @@
 
 Frontend-only prototype SPA for supply chain traceability. Runs fully in the browser using localStorage. No backend, no blockchain.
 
-Tech: React, Next.js (client-only), TailwindCSS, react-router, html5-qrcode, qr-code-styling.
-
-## Run locally
-
-```
-npm install
-npm run dev
-```
-
-Open http://localhost:3000
+## Tech Stack: 
+React, Next.js (client-only), TailwindCSS, react-router, html5-qrcode, qr-code-styling.
 
 ## Features
 
@@ -27,7 +19,7 @@ Open http://localhost:3000
 - Regulator: filters and simple India map heat tiles
 - Offline-first: all data in localStorage
 
-## Logins (seed)
+## Sample Logins
 
 - u_f1 / farmer1@isark / 900000001 PIN 111111 (farmer)
 - u_t1 PIN 222222 (transporter)
@@ -36,4 +28,3 @@ Open http://localhost:3000
 - u_l1 PIN 555555 (lab)
 - u_r1 PIN 666666 (regulator)
 
-Data keys: `isark_users`, `isark_batches`, `isark_aggregates`, `isark_products`
